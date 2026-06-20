@@ -25,12 +25,12 @@ def render_pagination_controls(key_suffix, total_pages):
     if total_pages > 1:
         col_prev, col_center, col_next = st.columns([1.5, 7, 1.5])
         with col_prev:
-            if st.button("Página Anterior", disabled=(st.session_state.catalog_page == 1), key=f"prev_{key_suffix}", width='stretch'):
+            if st.button("Página Anterior", disabled=(st.session_state.catalog_page == 1), key=f"prev_{key_suffix}", type="primary", use_container_width=True):
                 st.session_state.catalog_page -= 1
                 st.rerun()
         with col_center:
             st.markdown(f"<div style='text-align: center; padding-top: 8px;'>Página <b>{st.session_state.catalog_page}</b> de {total_pages}</div>", unsafe_allow_html=True)
         with col_next:
-            if st.button("Página Siguiente", disabled=(st.session_state.catalog_page == total_pages), key=f"next_{key_suffix}", width='stretch'):
+            if st.button("Página Siguiente", disabled=(st.session_state.catalog_page == total_pages), key=f"next_{key_suffix}", type="primary", use_container_width=True):
                 st.session_state.catalog_page += 1
                 st.rerun()

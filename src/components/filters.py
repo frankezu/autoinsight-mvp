@@ -9,7 +9,7 @@ def render_filters(df):
     filters = {}
     
     with st.expander("Filtros de Búsqueda", expanded=True):
-        st.markdown("##### Parámetros Numéricos")
+        st.markdown("<h5 style='color: #1a1a1a; font-weight: 700; margin-bottom: 15px;'>Parámetros Numéricos</h5>", unsafe_allow_html=True)
         col_s1, col_s2, col_s3 = st.columns(3)
         with col_s1:
             min_year = int(df['year'].min())
@@ -24,7 +24,7 @@ def render_filters(df):
             
         st.divider()
         
-        st.markdown("##### Especificaciones Técnicas")
+        st.markdown("<h5 style='color: #1a1a1a; font-weight: 700; margin-bottom: 15px;'>Especificaciones Técnicas</h5>", unsafe_allow_html=True)
         col_c1, col_c2, col_c3, col_c4, col_c5 = st.columns(5)
         with col_c1:
             marcas = df['brand'].dropna().unique()

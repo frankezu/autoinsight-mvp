@@ -12,72 +12,104 @@ def render_home(df):
 
     # 1. Hero Section
     st.markdown("""
-    <div style='text-align: center; padding: 2rem 0; font-family: "Inter", sans-serif;'>
-        <h1 style='font-size: 2.8rem; color: #111827; margin-bottom: 15px; font-weight: 800; letter-spacing: -1px;'>Bienvenido a AutoInsight</h1>
-        <p style='font-size: 1.15rem; color: #4b5563; max-width: 800px; margin: 0 auto; line-height: 1.6;'>
-            Redefiniendo la experiencia de compra automotriz. Una plataforma que integra un catálogo de inventario dinámico con inteligencia artificial responsiva.
-        </p>
-    </div>
-    <hr style='border: none; border-top: 1px solid #e5e7eb; margin: 10px 0 30px 0;'>
-    """, unsafe_allow_html=True)
+<div style='text-align: center; padding: 2rem 0;'>
+<h1 style='font-size: 2.8rem; color: #1a1a1a; margin-bottom: 15px; font-weight: 400; letter-spacing: -1px;'>Bienvenido a <span style='font-weight: 900;'>AutoInsight</span><span style='color: #2563eb; font-weight: 900;'>.</span></h1>
+<p style='font-size: 1.15rem; color: #4a4a4a; max-width: 800px; margin: 0 auto; line-height: 1.6; text-align: center;'>
+Redefiniendo la experiencia de compra automotriz. Una plataforma que integra un <b>catálogo de inventario dinámico</b> con <b>inteligencia artificial responsiva</b>.
+</p>
+</div>
+<div style='margin: 20px 0 40px 0;'></div>
+""", unsafe_allow_html=True)
 
-    # 2. MÉTRICAS DINÁMICAS
+    # 2. CARACTERÍSTICAS
+    st.markdown("<p style='color: #2563eb; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 20px; font-weight: 700;'>Nuestra Propuesta de Valor</p>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns(3)
+    
+    def feature_card(title, desc):
+        return f"""
+<div style='background-color: #f8f8f6; border: 1px solid #e8e8e4; padding: 2rem; border-radius: 4px;'>
+<h3 style='color: #1a1a1a; font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 0; margin-bottom: 15px;'>{title}</h3>
+<p style='color: #6b6b6b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 0; text-align: justify;'>{desc}</p>
+</div>
+"""
+
+    with col1:
+        st.markdown(feature_card(
+            "🔍 Catálogo de Alta Precisión", 
+            "Navega por el inventario mediante una <b>interfaz limpia</b> y libre de ruido visual. Filtra vehículos por <b>marca, año y transmisión</b> para encontrar exactamente lo que necesitas, sin complicaciones."
+        ), unsafe_allow_html=True)
+    with col2:
+        st.markdown(feature_card(
+            "✨ Asesor Virtual con IA", 
+            "Nuestro agente inteligente no solo responde dudas, sino que <b>analiza el mercado en tiempo real</b>. Te guía hacia las <b>mejores oportunidades de compra</b> con recomendaciones claras y fundamentadas."
+        ), unsafe_allow_html=True)
+    with col3:
+        st.markdown(feature_card(
+            "📈 Decisiones Basadas en Datos", 
+            "Deja de adivinar. Cruzamos variables clave (como el <b>kilometraje, año y depreciación</b>) para garantizar que tomes una decisión segura y que cada peso invertido <b>maximice tu rentabilidad</b>."
+        ), unsafe_allow_html=True)
+
+    st.markdown("<div style='margin: 50px 0;'></div>", unsafe_allow_html=True)
+
+    # 3. MÉTRICAS DINÁMICAS
     total_vehiculos = f"{len(df):,}".replace(",", ".")
     precio_promedio = f"${int(df['askprice'].mean()):,}".replace(",", ".")
-    marca_popular = df['brand'].mode()[0].capitalize()
+    marca_popular = df['brand'].mode()[0].title()
     km_promedio = f"{int(df['kmdriven'].mean()):,}".replace(",", ".")
     
-    st.markdown("<p style='color: #6b7280; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; font-weight: 600;'>Resumen del Inventario en Tiempo Real</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #2563eb; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 15px; font-weight: 700;'>Resumen del Inventario en Tiempo Real</p>", unsafe_allow_html=True)
     
     m1, m2, m3, m4 = st.columns(4)
-    m1.metric(label="Vehículos en Stock", value=total_vehiculos)
-    m2.metric(label="Precio Promedio (CLP)", value=precio_promedio)
-    m3.metric(label="Marca Popular", value=marca_popular)
-    m4.metric(label="Kilometraje Promedio", value=f"{km_promedio} km")
+    
+    def metric_card(title, value):
+        return f"""
+<div style='text-align: center; padding: 1rem 0;'>
+<p style='color: #6b6b6b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; margin: 0 0 5px 0;'>{title}</p>
+<h2 style='color: #1a1a1a; font-size: 2.2rem; margin: 0; font-weight: 700; letter-spacing: -1px;'>{value}</h2>
+</div>
+"""
+    
+    m1.markdown(metric_card("Stock Total", total_vehiculos), unsafe_allow_html=True)
+    m2.markdown(metric_card("Precio Promedio", precio_promedio), unsafe_allow_html=True)
+    m3.markdown(metric_card("Marca Popular", marca_popular), unsafe_allow_html=True)
+    m4.markdown(metric_card("Km Promedio", f"{km_promedio} km"), unsafe_allow_html=True)
 
-    st.markdown("<hr style='border: none; border-top: 1px solid #e5e7eb; margin: 30px 0 30px 0;'>", unsafe_allow_html=True)
+    st.markdown("<div style='margin: 50px 0;'></div>", unsafe_allow_html=True)
 
-    # 3. GRÁFICO: VOLUMEN POR MARCA (Mejorado)
-    st.markdown("<h3 style='color: #111827; font-size: 1.1rem; margin-bottom: 20px;'>Marcas con mayor stock</h3>", unsafe_allow_html=True)
+    # 4. GRÁFICO: VOLUMEN POR MARCA (Mejorado)
+    st.markdown("<p style='color: #2563eb; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 15px; font-weight: 700;'>Marcas con mayor stock</p>", unsafe_allow_html=True)
     
     df_marcas = df['brand'].value_counts().head(8).reset_index()
     df_marcas.columns = ['brand', 'count']
 
     # Gráfico de barras horizontales con etiquetas
     c1 = alt.Chart(df_marcas).mark_bar(
-        cornerRadiusTopRight=5, cornerRadiusBottomRight=5, color='#374151'
+        cornerRadiusTopRight=5, cornerRadiusBottomRight=5, color='#2563eb'
     ).encode(
         x=alt.X('count', title=None, axis=alt.Axis(format='d')),
         y=alt.Y('brand', sort='-x', title=None),
         tooltip=['brand', 'count']
-    )
-    text = c1.mark_text(align='left', baseline='middle', dx=3, color='#4b5563').encode(text='count')
+    ).properties(height=380)
+    text = c1.mark_text(align='left', baseline='middle', dx=3, color='#4a4a4a').encode(text='count')
     
-    st.altair_chart((c1 + text), use_container_width=True)
+    st.altair_chart((c1 + text), width='stretch')
 
-    st.markdown("<hr style='border: none; border-top: 1px solid #e5e7eb; margin: 30px 0 30px 0;'>", unsafe_allow_html=True)
-
-    # 4. CARACTERÍSTICAS
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown("<h3 style='color: #111827; font-size: 1.1rem;'>Catálogo Estructural</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #6b7280; font-size: 0.95rem; line-height: 1.6;'>Interfaz minimalista diseñada para precisión de búsqueda.</p>", unsafe_allow_html=True)
-    with col2:
-        st.markdown("<h3 style='color: #111827; font-size: 1.1rem;'>Asesoría Inteligente</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #6b7280; font-size: 0.95rem; line-height: 1.6;'>Agente virtual que analiza datos y compara opciones en tiempo real.</p>", unsafe_allow_html=True)
-    with col3:
-        st.markdown("<h3 style='color: #111827; font-size: 1.1rem;'>Decisión Informada</h3>", unsafe_allow_html=True)
-        st.markdown("<p style='color: #6b7280; font-size: 0.95rem; line-height: 1.6;'>Cruzamos información financiera y técnica para asegurar la mejor calidad-precio.</p>", unsafe_allow_html=True)
-
-    # 5. FOOTER
+    # 5. SOBRE NUESTRO MVP
+    st.markdown("<div style='margin-top: 60px; padding-top: 1rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #2563eb; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 30px; font-weight: 700;'>Sobre nuestro MVP</p>", unsafe_allow_html=True)
     st.markdown("""
-    <div style='text-align: center; margin-top: 50px; padding: 2rem; border-top: 1px solid #e5e7eb;'>
-        <p style='font-size: 14px; color: #4b5563; max-width: 850px; margin: 0 auto; line-height: 1.6; font-family: "Inter", sans-serif;'>
-            <strong>Nota de Infraestructura (MVP):</strong> Esta plataforma opera como un Producto Mínimo Viable orientado a validar la integración de modelos de lenguaje (LLMs) con bases de datos relacionales en memoria. Actualmente utiliza un dataset internacional adaptado financieramente (CLP) para propósitos de demostración técnica. 
-            <br><br>
-            La eficiencia lograda con este volumen de datos valida nuestra arquitectura de procesamiento, confirmando que el sistema es completamente escalable y aplicable a inventarios reales del mercado automotriz chileno. La herramienta integra análisis estadístico mediante Pandas y visualización reactiva con Altair.
-            <br><br>
-            <span style='color: #111827; font-weight: 600;'>Desarrollado para Samsung Innovation Campus por: Ariel Leiva y Franco Bernal.</span>
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+<div style='max-width: 850px; margin: 0 auto;'>
+<div style='margin-bottom: 30px;'>
+<p style='font-size: 0.95rem; color: #4a4a4a; line-height: 1.6; text-align: justify;'>
+<strong style='color: #1a1a1a;'>AutoInsight</strong> es un prototipo MVP de venta de autos usados con <b>Inteligencia Artificial integrada</b>. Nuestro objetivo es demostrar cómo un asistente virtual puede transformar y simplificar la experiencia de usuario al buscar y comparar vehículos en un catálogo interactivo. Para probar la viabilidad y escalabilidad de esta arquitectura a nivel local, el sistema fue validado utilizando un robusto dataset de la India, cuyos precios fueron convertidos a pesos chilenos (CLP).
+</p>
+</div>
+
+<div>
+<p style='font-size: 0.95rem; color: #4a4a4a; line-height: 1.6; text-align: justify;'>
+<strong style='color: #1a1a1a;'>Dataset:</strong> <a href='https://www.kaggle.com/datasets/mohitkumar282/used-car-dataset' target='_blank' style='color: #1a1a1a; text-decoration: underline;'>Kaggle (14.993 registros)</a><br>
+<strong style='color: #1a1a1a;'>Repositorio:</strong> <a href='https://github.com/frankezu/autoinsight-app' target='_blank' style='color: #1a1a1a; text-decoration: underline;'>GitHub</a>
+</p>
+</div>
+</div>
+""", unsafe_allow_html=True)

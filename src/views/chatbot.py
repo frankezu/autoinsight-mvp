@@ -9,19 +9,14 @@ def render_chatbot(df):
     """
     # --- 1. ENCABEZADO Y CONTROLES DE UI ---
     col1, col2 = st.columns([4, 1])
-    
-    with col1:
-        # Título eliminado. Solo dejamos la descripción con un pequeño margen para alinear con el botón
-        st.markdown("<p style='color: #6b7280; font-size: 0.95rem; margin-top: 10px;'>Consulta información del catálogo, precios y recomendaciones en tiempo real.</p>", unsafe_allow_html=True)
         
     with col2:
-        # Botón sobrio sin espacios extra arriba
-        if st.button("Reiniciar chat", use_container_width=True):
+        if st.button("Reiniciar chat", type="primary", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
             
-    # Línea separadora sutil
-    st.markdown("<hr style='border: none; border-top: 1px solid #f3f4f6; margin: 10px 0 20px 0;'>", unsafe_allow_html=True)
+    # Línea separadora sutil (espacio en blanco)
+    st.markdown("<div style='margin: 10px 0 30px 0;'></div>", unsafe_allow_html=True)
 
     # --- 2. LÓGICA DEL AGENTE ---
     api_key = "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" 
@@ -30,7 +25,7 @@ def render_chatbot(df):
         st.session_state.messages = [
             {
                 "role": "assistant", 
-                "content": "Hola. Soy el asistente de AutoInsight.\n\nEstoy conectado al catálogo en tiempo real. Puedes pedirme recomendaciones según tu presupuesto, filtrar por año, o buscar marcas específicas.\n\n¿Qué tipo de vehículo buscas hoy?"
+                "content": "Hola. Soy el asistente de **AutoInsight**.\n\nEstoy conectado al **catálogo en tiempo real**. Puedes pedirme **recomendaciones según tu presupuesto**, **filtrar por año**, o **buscar marcas específicas**.\n\n¿Qué tipo de vehículo buscas hoy?"
             }
         ]
 
@@ -65,7 +60,14 @@ def render_chatbot(df):
                     
                     agent = get_fast_agent(df, api_key)
                     
-                    instruccion = "You MUST use English for your Thought and Action steps. Your 'Final Answer' MUST be in Spanish, professional, highly concise, and minimalist. Do absolutely NOT use any emojis. User query: "
+                    instruccion = (
+                        "You MUST use English for your Thought and Action steps. "
+                        "Your 'Final Answer' MUST be in Spanish, professional, highly concise, and minimalist. "
+                        "Do absolutely NOT use any emojis. "
+                        "CRITICAL: Whenever you provide prices or monetary values, ALWAYS format them in Chilean Pesos (CLP) with thousands separators (e.g., $10.500.000). "
+                        "Also, always include a brief, logical justification for your answer or recommendation. "
+                        "User query: "
+                    )
                     response = agent.invoke(instruccion + prompt)
                     respuesta_texto = response.get("output") if isinstance(response, dict) else response
                     

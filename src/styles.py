@@ -33,19 +33,15 @@ def apply_custom_styles():
             text-transform: uppercase !important;
             letter-spacing: 1px !important;
         }
-        
-        /* Minimalist Buttons */
-        .stButton>button {
-            border-radius: 4px;
-            border: 1px solid rgba(128, 128, 128, 0.3);
-            background-color: transparent;
-            transition: all 0.2s ease;
+        /* Color azul para la pestaña activa */
+        .stTabs [data-baseweb="tab"][aria-selected="true"] p {
+            color: #2563eb !important;
         }
-        .stButton>button:hover {
-            border-color: rgba(128, 128, 128, 0.6);
-            background-color: rgba(128, 128, 128, 0.05);
+        .stTabs [data-baseweb="tab-list"] [data-testid="stMarkdownContainer"] ~ div {
+            background-color: #2563eb !important; /* underline color */
         }
         
+
         /* Clean expanders */
         .streamlit-expanderHeader {
             border: none;
@@ -56,27 +52,39 @@ def apply_custom_styles():
             border-radius: 6px;
         }
         
-        /* Estilos para inputs y selectboxes */
+        /* Estilos para inputs y selectboxes con focus azul */
         .stTextInput>div>div>input {
             border-radius: 6px !important;
             border: 1px solid #d1d5db !important;
             transition: all 0.2s ease;
         }
         .stTextInput>div>div>input:focus {
-            border-color: #111827 !important;
-            box-shadow: 0 0 0 1px #111827 !important;
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 1px #2563eb !important;
         }
         .stSelectbox>div>div>div {
             border-radius: 6px !important;
             border: 1px solid #d1d5db !important;
             transition: all 0.2s;
         }
+        .stSelectbox>div>div>div:focus-within {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 1px #2563eb !important;
+        }
         
         /* Contenedor principal: limitar el ancho máximo para una lectura cómoda (estilo SaaS real) */
         .main .block-container {
             max-width: 1100px !important;
             padding-top: 2rem !important;
-            padding-bottom: 3rem !important;
+            padding-bottom: 1rem !important;
+            padding-left: 12rem !important;
+            padding-right: 12rem !important;
+        }
+
+        /* Aumentar el tamaño de la fuente en el chat para mejor legibilidad */
+        div[data-testid="stChatMessageContent"] p {
+            font-size: 1.1rem !important;
+            line-height: 1.6 !important;
         }
 
         /* Hide default Streamlit decorations for a true minimalist feel */

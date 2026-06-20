@@ -84,7 +84,7 @@ def render_vehicle_card(row):
             price_html = f"""
             <div style="text-align: right; font-family: 'Inter', sans-serif; padding-top: 5px;">
                 <div style="font-size: 11px; color: gray; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Valor Estimado</div>
-                <div style="font-size: 22px; font-weight: 700; color: #111827;">{price} CLP</div>
+                <div style="font-size: 22px; font-weight: 700; color: #2563eb;">{price} CLP</div>
             </div>
             """
             st.markdown(price_html, unsafe_allow_html=True)
