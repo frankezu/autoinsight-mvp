@@ -1,89 +1,56 @@
 import streamlit as st
-import pandas as pd
+from src.components.filters import render_filters, apply_filters
+from src.components.pagination import get_pagination_info, render_pagination_controls
+from src.components.vehicle_card import render_vehicle_card
 
 def render_catalog(df):
     """
     Renderiza la vista del catálogo o buscador de vehículos.
     """
-    st.title("Buscador de Vehículos")
-    st.markdown("Utiliza los filtros de la izquierda para explorar el catálogo.")
-    
     if df.empty:
         st.warning("El dataset está vacío. Por favor, verifica la carga de datos.")
         return
 
-    # Contenedor de filtros en un expansor para mantener la interfaz limpia
-    with st.expander("Filtros de Búsqueda", expanded=True):
-        col1, col2, col3, col4 = st.columns(4)
+    # 1. Renderizar filtros y obtener selecciones
+    filters = render_filters(df)
+    
+    # 2. Aplicar filtros al dataframe
+    filtered_df = apply_filters(df, filters)
         
-        with col1:
-            marcas = df['brand'].dropna().unique()
-            selected_brand = st.selectbox("Marca", options=["Todas"] + sorted(list(marcas)))
-            
-            # El modelo depende de la marca seleccionada
-            if selected_brand != "Todas":
-                modelos = df[df['brand'] == selected_brand]['model'].dropna().unique()
-            else:
-                modelos = df['model'].dropna().unique()
-            selected_model = st.selectbox("Modelo", options=["Todos"] + sorted(list(modelos)))
-            
-        with col2:
-            min_year = int(df['year'].min())
-            max_year = int(df['year'].max())
-            selected_years = st.slider("Rango de Años", min_value=min_year, max_value=max_year, value=(min_year, max_year))
-            
-            max_km = int(df['kmdriven'].max())
-            selected_km = st.slider("Kilometraje máximo", min_value=0, max_value=max_km, value=max_km, step=5000)
-            st.caption(f"KM seleccionado: **{selected_km:,} km**".replace(",", "."))
-
-        with col3:
-            max_price = int(df['askprice'].max())
-            selected_price = st.slider("Precio máximo (CLP)", min_value=0, max_value=max_price, value=max_price, step=500000)
-            st.caption(f"Precio seleccionado: **${selected_price:,} CLP**".replace(",", "."))
-            
-            transmisiones = df['transmission'].dropna().unique()
-            selected_trans = st.selectbox("Transmisión", options=["Todas"] + list(transmisiones))
-
-        with col4:
-            combustibles = df['fueltype'].dropna().unique()
-            selected_fuel = st.selectbox("Combustible", options=["Todos"] + list(combustibles))
-            
-            dueños = df['owner'].dropna().unique()
-            selected_owner = st.selectbox("Dueño", options=["Todos"] + list(dueños))
-
-    # Filtrar datos
-    filtered_df = df.copy()
+    total_results = len(filtered_df)
     
-    if selected_brand != "Todas":
-        filtered_df = filtered_df[filtered_df['brand'] == selected_brand]
-    if selected_model != "Todos":
-        filtered_df = filtered_df[filtered_df['model'] == selected_model]
+    if total_results == 0:
+        st.info("No se han encontrado vehículos que coincidan con los criterios de búsqueda especificados.")
+    else:
+        # 3. Configuración de paginación
+        page, total_pages, start_idx, end_idx = get_pagination_info(total_results)
         
-    filtered_df = filtered_df[
-        (filtered_df['year'] >= selected_years[0]) & 
-        (filtered_df['year'] <= selected_years[1])
-    ]
-    
-    filtered_df = filtered_df[filtered_df['kmdriven'] <= selected_km]
-    filtered_df = filtered_df[filtered_df['askprice'] <= selected_price]
-    
-    if selected_trans != "Todas":
-        filtered_df = filtered_df[filtered_df['transmission'] == selected_trans]
-    if selected_fuel != "Todos":
-        filtered_df = filtered_df[filtered_df['fueltype'] == selected_fuel]
-    if selected_owner != "Todos":
-        filtered_df = filtered_df[filtered_df['owner'] == selected_owner]
+        # Controles superiores: Resultados y Ordenamiento
+        col_res, col_sort = st.columns([3, 1])
+        with col_res:
+            st.write(f"**Mostrando resultados {start_idx + 1} al {min(end_idx, total_results)} de {total_results}:**")
+        with col_sort:
+            sort_order = st.selectbox(
+                "Orden", 
+                ["Sin orden", "Precio: Menor a Mayor", "Precio: Mayor a Menor"], 
+                label_visibility="collapsed"
+            )
+            
+        # Aplicar ordenamiento al dataframe ANTES de paginar
+        if sort_order == "Precio: Menor a Mayor":
+            filtered_df = filtered_df.sort_values(by="askprice", ascending=True)
+        elif sort_order == "Precio: Mayor a Menor":
+            filtered_df = filtered_df.sort_values(by="askprice", ascending=False)
+            
+        # 4. Renderizar paginación superior
+        render_pagination_controls("top", total_pages)
+        st.markdown("<hr style='margin: 15px 0; border: none; border-top: 1px solid rgba(128, 128, 128, 0.2);'>", unsafe_allow_html=True)
         
-    st.write(f"**Mostrando {len(filtered_df)} resultados:**")
-    
-    # Formatear números en la tabla con separador de miles usando puntos (.)
-    styled_df = filtered_df.head(100).style.format(
-        formatter={
-            "askprice": lambda x: f"${int(x):,}".replace(",", ".") if pd.notna(x) else "",
-            "kmdriven": lambda x: f"{int(x):,}".replace(",", ".") if pd.notna(x) else "",
-            "year": lambda x: f"{int(x)}" if pd.notna(x) else "",
-            "age": lambda x: f"{int(x)}" if pd.notna(x) else ""
-        }
-    )
-    st.dataframe(styled_df, use_container_width=True)
-
+        # 5. Renderizar resultados
+        resultados = filtered_df.iloc[start_idx:end_idx]
+        
+        for _, row in resultados.iterrows():
+            render_vehicle_card(row)
+                
+        # 6. Renderizar paginación inferior
+        render_pagination_controls("bottom", total_pages)

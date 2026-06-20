@@ -3,3 +3,6 @@ pandas
 streamlit
 matplotlib
 seaborn
+langchain-groq
+langchain-experimental
+tabulate

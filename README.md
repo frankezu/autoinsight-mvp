@@ -1,8 +1,8 @@
 # AutoInsight - Proyecto SIC 2026
 
 ## Equipo
-- Integrante 1 (GitHub: @tu_usuario)
-- *(Completa con los demás integrantes de tu equipo)*
+- Ariel Leiva (GitHub: @Ariel-Leiva)
+- Franco Bernal (GitHub: @frankezu)
 
 ## Dataset
 - **Fuente**: [Kaggle - mohitkumar282/used-car-dataset](https://www.kaggle.com/datasets/mohitkumar282/used-car-dataset)

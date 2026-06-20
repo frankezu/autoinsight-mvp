@@ -1,43 +1,35 @@
 import streamlit as st
 
-# Configuración inicial de la página (DEBE ser la primera llamada a st)
 st.set_page_config(
-    page_title="AutoInsight MVP",
+    page_title="AutoInsight",
     layout="wide"
 )
 
-# Importaciones de los módulos locales
-from src.data_loader import get_cleaned_data
 from src.styles import apply_custom_styles
+from src.data_loader import get_cleaned_data
 from src.views.home import render_home
 from src.views.catalog import render_catalog
 from src.views.chatbot import render_chatbot
 
-def main():
-    # 1. Inyectar CSS y estilos
-    apply_custom_styles()
+apply_custom_styles()
+df = get_cleaned_data()
 
-    # 2. Cargar los datos desde el CSV limpio
-    df = get_cleaned_data()
+st.markdown(
+    """
+    <div style='font-family: "Inter", sans-serif; font-size: 46px; font-weight: 900; letter-spacing: -2px; color: #111827; margin-top: -25px; margin-bottom: 10px;'>
+        AutoInsight<span style='color: #2563eb;'>.</span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-    # 3. Construir la barra lateral (Sidebar) de navegación
-    with st.sidebar:
-        st.title("AutoInsight")
-        st.markdown("Navegación del prototipo:")
-        menu = st.radio("Ir a:", ["Inicio", "Buscador", "Asesor Chatbot"])
-        
-        st.markdown("---")
-        st.caption("Desarrollado para Samsung Innovation Campus 2026")
+tab1, tab2, tab3 = st.tabs(["Inicio", "Catálogo", "Asistente"])
 
-    # 4. Renderizar la vista correspondiente según el menú seleccionado
-    if menu == "Inicio":
-        render_home()
-        
-    elif menu == "Buscador":
-        render_catalog(df)
-        
-    elif menu == "Asesor Chatbot":
-        render_chatbot(df)
+with tab1:
+    render_home()
 
-if __name__ == "__main__":
-    main()
+with tab2:
+    render_catalog(df)
+
+with tab3:
+    render_chatbot(df)
