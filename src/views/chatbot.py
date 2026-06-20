@@ -1,34 +1,52 @@
 import streamlit as st
 import pandas as pd
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
-from langchain_groq import ChatGroq # <--- NUEVA IMPORTACIÓN
+from langchain_groq import ChatGroq
 
 def render_chatbot(df):
     """
-    Renderiza la vista del Asesor Chatbot y lo conecta con el DataFrame usando Groq.
+    Renderiza la vista del Asesor Chatbot con un enfoque corporativo y ultraminimalista.
     """
-    # Clave de API GROQ
+    # --- 1. ENCABEZADO Y CONTROLES DE UI ---
+    col1, col2 = st.columns([4, 1])
+    
+    with col1:
+        # Título eliminado. Solo dejamos la descripción con un pequeño margen para alinear con el botón
+        st.markdown("<p style='color: #6b7280; font-size: 0.95rem; margin-top: 10px;'>Consulta información del catálogo, precios y recomendaciones en tiempo real.</p>", unsafe_allow_html=True)
+        
+    with col2:
+        # Botón sobrio sin espacios extra arriba
+        if st.button("Reiniciar chat", use_container_width=True):
+            st.session_state.messages = []
+            st.rerun()
+            
+    # Línea separadora sutil
+    st.markdown("<hr style='border: none; border-top: 1px solid #f3f4f6; margin: 10px 0 20px 0;'>", unsafe_allow_html=True)
+
+    # --- 2. LÓGICA DEL AGENTE ---
     api_key = "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" 
 
-    if "messages" not in st.session_state:
+    if "messages" not in st.session_state or len(st.session_state.messages) == 0:
         st.session_state.messages = [
-            {"role": "assistant", "content": "¡Hola! Soy tu asistente. ¿En qué te puedo ayudar hoy?"}
+            {
+                "role": "assistant", 
+                "content": "Hola. Soy el asistente de AutoInsight.\n\nEstoy conectado al catálogo en tiempo real. Puedes pedirme recomendaciones según tu presupuesto, filtrar por año, o buscar marcas específicas.\n\n¿Qué tipo de vehículo buscas hoy?"
+            }
         ]
 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    if prompt := st.chat_input("Escribe tu consulta..."):
+    if prompt := st.chat_input("Ej: Muéstrame los vehículos marca Toyota..."):
         
         st.session_state.messages.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
 
         with st.chat_message("assistant"):
-            with st.spinner("Pensando..."):
+            with st.spinner("Procesando consulta..."):
                 try:
-                    # Usamos caché para que el agente no se re-instancie en cada pregunta
                     @st.cache_resource(show_spinner=False)
                     def get_fast_agent(_df, _api_key):
                         llm = ChatGroq(
@@ -42,29 +60,23 @@ def render_chatbot(df):
                             verbose=False, 
                             allow_dangerous_code=True,
                             agent_type="zero-shot-react-description",
-                            max_iterations=3  # <-- CLAVE: Evita bucles largos de razonamiento
+                            max_iterations=3  
                         )
                     
                     agent = get_fast_agent(df, api_key)
                     
-                    # 3. Ejecutar la consulta
-                    # Instruimos al agente que solo la 'Final Answer' debe ser en español,
-                    # para no romper el parser interno de Langchain que busca las palabras en inglés.
-                    instruccion = "You MUST use English for your Thought and Action steps, but your 'Final Answer' MUST be in Spanish, friendly, and concise. User query: "
+                    instruccion = "You MUST use English for your Thought and Action steps. Your 'Final Answer' MUST be in Spanish, professional, highly concise, and minimalist. Do absolutely NOT use any emojis. User query: "
                     response = agent.invoke(instruccion + prompt)
                     respuesta_texto = response.get("output") if isinstance(response, dict) else response
                     
-                    # Mostrar y guardar respuesta
                     st.markdown(respuesta_texto)
                     st.session_state.messages.append({"role": "assistant", "content": respuesta_texto})
                     
                 except Exception as e:
                     error_msg = str(e)
                     if "429" in error_msg or "Rate limit" in error_msg:
-                        mensaje_error = "⚠️ Has alcanzado el límite de consultas gratuitas de la Inteligencia Artificial por ahora. Por favor, intenta de nuevo en un par de minutos."
-                        st.error(mensaje_error)
-                        # Removemos el mensaje vacío que queda si hay error
-                        if st.session_state.messages[-1]["role"] == "user":
-                            pass # Opcional: podrías eliminar el mensaje del usuario si falla
+                        st.error("Límite de consultas alcanzado. Por favor, intenta de nuevo en un minuto.")
+                        if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
+                            st.session_state.messages.pop() 
                     else:
-                        st.error(f"Ocurrió un error al consultar los datos: {e}")
+                        st.error(f"Error interno: {e}")

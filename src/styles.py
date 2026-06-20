@@ -9,6 +9,11 @@ def apply_custom_styles():
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
+        /* Oculta los enlaces de anclaje de Streamlit */
+        h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+            display: none !important;
+        }
+                
         /* Minimalist and clean style (adaptable to light/dark mode) */
         html, body, .stApp, h1, h2, h3, h4, h5, h6, p, li, a, button, input, label, th, td, div[data-testid="stMarkdownContainer"] {
             font-family: "Inter", sans-serif !important;

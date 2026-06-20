@@ -6,3 +6,4 @@ seaborn
 langchain-groq
 langchain-experimental
 tabulate
+ipykernerl

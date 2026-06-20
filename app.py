@@ -26,7 +26,7 @@ st.markdown(
 tab1, tab2, tab3 = st.tabs(["Inicio", "Catálogo", "Asistente"])
 
 with tab1:
-    render_home()
+    render_home(df)
 
 with tab2:
     render_catalog(df)
