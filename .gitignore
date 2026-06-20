@@ -2,9 +2,6 @@
 data/*.csv
 !data/*_clean.csv
 
-# Outputs/Generated assets
-outputs/
-
 # Virtual Environments
 .venv/
 venv/
