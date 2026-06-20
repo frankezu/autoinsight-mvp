@@ -1,5 +1,6 @@
 # Datasets
-data/
+data/*.csv
+!data/*_clean.csv
 
 # Outputs/Generated assets
 outputs/
@@ -20,3 +21,6 @@ __pycache__/
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# Documentation
+pauta.md
