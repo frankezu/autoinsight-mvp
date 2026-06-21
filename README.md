@@ -13,10 +13,10 @@
 - **Licencia**: Uso Público (Extraído de portales online de vehículos)
 
 ## Pregunta de análisis
-¿Cómo podemos utilizar un catálogo de datos de vehículos para construir un MVP de venta de autos usados con Inteligencia Artificial integrada, que mejore y simplifique la experiencia de los usuarios?
+¿Cuáles son los principales atributos que influyen en la depreciación de un vehículo en el mercado de usados, y cómo podemos utilizar Inteligencia Artificial sobre estos datos para ayudar a los usuarios a tomar decisiones de compra rentables y fundamentadas?
 
 ## Hallazgo principal
-El análisis de los datos nos permitió estructurar un catálogo robusto. Basándonos en esta información, construimos **AutoInsight**, un prototipo MVP de venta de autos usados con Inteligencia Artificial integrada. Nuestra plataforma permite explorar el mercado actual mediante filtros dinámicos y consultar con un Asesor Virtual Inteligente que ayuda a los usuarios a encontrar el vehículo ideal de manera fundamentada. *(Nota: validado con datos de India convertidos a CLP para simular escalabilidad local).*
+El análisis exploratorio reveló que la depreciación de un vehículo está fuertemente determinada por la intersección del **año de fabricación, kilometraje y tipo de transmisión**. Los autos automáticos y de bajo kilometraje retienen un valor premium significativamente superior. Dado que calcular manualmente el impacto de estas variables es complejo para un comprador promedio, concluimos que la mejor solución analítica era construir **AutoInsight**: un prototipo MVP con un Asistente Virtual de IA capaz de procesar este catálogo en tiempo real y guiar a los usuarios hacia las mejores oportunidades del mercado. *(Nota: validado con datos de India convertidos a CLP para simular escalabilidad local).*
 
 ## Link al dashboard
 https://autoinsight-mvp.streamlit.app/

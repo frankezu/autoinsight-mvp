@@ -53,26 +53,24 @@ Redefiniendo la experiencia de compra automotriz. Una plataforma que integra un 
 
     # 3. MÉTRICAS DINÁMICAS
     total_vehiculos = f"{len(df):,}".replace(",", ".")
-    precio_promedio = f"${int(df['askprice'].mean()):,}".replace(",", ".")
     marca_popular = df['brand'].mode()[0].title()
-    km_promedio = f"{int(df['kmdriven'].mean()):,}".replace(",", ".")
     
     st.markdown("<p style='color: #2563eb; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 15px; font-weight: 700;'>Resumen del Inventario en Tiempo Real</p>", unsafe_allow_html=True)
     
-    m1, m2, m3, m4 = st.columns(4)
-    
     def metric_card(title, value):
         return f"""
-<div style='text-align: center; padding: 1rem 0;'>
+<div style='text-align: center; padding: 1rem 2rem;'>
 <p style='color: #6b6b6b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; margin: 0 0 5px 0;'>{title}</p>
 <h2 style='color: #1a1a1a; font-size: 2.2rem; margin: 0; font-weight: 700; letter-spacing: -1px;'>{value}</h2>
 </div>
 """
     
-    m1.markdown(metric_card("Stock Total", total_vehiculos), unsafe_allow_html=True)
-    m2.markdown(metric_card("Precio Promedio", precio_promedio), unsafe_allow_html=True)
-    m3.markdown(metric_card("Marca Popular", marca_popular), unsafe_allow_html=True)
-    m4.markdown(metric_card("Km Promedio", f"{km_promedio} km"), unsafe_allow_html=True)
+    st.markdown(f"""
+<div style='display: flex; justify-content: center; gap: 80px; flex-wrap: wrap;'>
+    {metric_card("Stock Total", total_vehiculos)}
+    {metric_card("Marca Popular", marca_popular)}
+</div>
+""", unsafe_allow_html=True)
 
     st.markdown("<div style='margin: 50px 0;'></div>", unsafe_allow_html=True)
 
@@ -101,7 +99,7 @@ Redefiniendo la experiencia de compra automotriz. Una plataforma que integra un 
 <div style='max-width: 850px; margin: 0 auto;'>
 <div style='margin-bottom: 30px;'>
 <p style='font-size: 0.95rem; color: #4a4a4a; line-height: 1.6; text-align: justify;'>
-<strong style='color: #1a1a1a;'>AutoInsight</strong> es un prototipo MVP de venta de autos usados con <b>Inteligencia Artificial integrada</b>. Nuestro objetivo es demostrar cómo un asistente virtual puede transformar y simplificar la experiencia de usuario al buscar y comparar vehículos en un catálogo interactivo. Para probar la viabilidad y escalabilidad de esta arquitectura a nivel local, el sistema fue validado utilizando un robusto dataset de la India, cuyos precios fueron convertidos a pesos chilenos (CLP).
+<strong style='color: #1a1a1a;'>AutoInsight</strong> nace de un análisis de mercado que demostró que la depreciación de los vehículos usados está dictada drásticamente por la combinación de <b>año, kilometraje y transmisión</b>. Para que los usuarios no tengan que calcular manualmente el impacto de estas variables, construimos este MVP de catálogo con <b>Inteligencia Artificial integrada</b>, donde un asistente procesa estos datos y guía hacia compras rentables y seguras. Para probar la viabilidad y escalabilidad de esta arquitectura a nivel local, el sistema fue validado utilizando un robusto dataset de la India, cuyos precios fueron convertidos a pesos chilenos (CLP).
 </p>
 </div>
 

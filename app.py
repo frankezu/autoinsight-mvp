@@ -8,6 +8,7 @@ st.set_page_config(
 from src.styles import apply_custom_styles
 from src.data_loader import get_cleaned_data
 from src.views.home import render_home
+from src.views.analysis import render_analysis
 from src.views.catalog import render_catalog
 from src.views.chatbot import render_chatbot
 
@@ -23,15 +24,18 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-tab1, tab2, tab3 = st.tabs(["Inicio", "Catálogo", "Asistente"])
+tab1, tab2, tab3, tab4 = st.tabs(["Inicio", "Análisis", "Catálogo", "Asistente"])
 
 with tab1:
     render_home(df)
 
 with tab2:
-    render_catalog(df)
+    render_analysis(df)
 
 with tab3:
+    render_catalog(df)
+
+with tab4:
     render_chatbot(df)
 
 st.markdown("""
