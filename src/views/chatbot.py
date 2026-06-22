@@ -19,7 +19,11 @@ def render_chatbot(df):
     st.markdown("<div style='margin: 10px 0 30px 0;'></div>", unsafe_allow_html=True)
 
     # --- 2. LÓGICA DEL AGENTE ---
-    api_key = "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" 
+    try:
+        api_key = st.secrets["GROQ_API_KEY"]
+    except KeyError:
+        st.error("Error: Falta configurar GROQ_API_KEY en st.secrets.")
+        return
 
     if "messages" not in st.session_state or len(st.session_state.messages) == 0:
         st.session_state.messages = [
@@ -55,7 +59,8 @@ def render_chatbot(df):
                             verbose=False, 
                             allow_dangerous_code=True,
                             agent_type="zero-shot-react-description",
-                            max_iterations=3  
+                            max_iterations=15,
+                            handle_parsing_errors=True
                         )
                     
                     agent = get_fast_agent(df, api_key)
@@ -64,12 +69,16 @@ def render_chatbot(df):
                         "You MUST use English for your Thought and Action steps. "
                         "Your 'Final Answer' MUST be in Spanish, professional, highly concise, and minimalist. "
                         "Do absolutely NOT use any emojis. "
-                        "CRITICAL: Whenever you provide prices or monetary values, ALWAYS format them in Chilean Pesos (CLP) with thousands separators (e.g., $10.500.000). "
+                        "CRITICAL: Do NOT use the '$' symbol for currency. Whenever you provide prices, ALWAYS format them as 'CLP 10.500.000' with thousands separators to avoid markdown math formatting errors. "
+                        "If asked for 'calidad-precio' or 'value for money', NEVER output raw mathematical ratios or calculated decimals (like 0.0034). Explain the value conceptually (e.g., 'low mileage for its year and price'). "
                         "Also, always include a brief, logical justification for your answer or recommendation. "
                         "User query: "
                     )
                     response = agent.invoke(instruccion + prompt)
                     respuesta_texto = response.get("output") if isinstance(response, dict) else response
+                    
+                    # Escapar signos de dolar para evitar que Streamlit los renderice como LaTeX (texto verde)
+                    respuesta_texto = respuesta_texto.replace("$", r"\$")
                     
                     st.markdown(respuesta_texto)
                     st.session_state.messages.append({"role": "assistant", "content": respuesta_texto})
@@ -80,5 +89,9 @@ def render_chatbot(df):
                         st.error("Límite de consultas alcanzado. Por favor, intenta de nuevo en un minuto.")
                         if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
                             st.session_state.messages.pop() 
+                    elif "iteration limit" in error_msg.lower():
+                        st.error("El asistente no pudo procesar la solicitud en el tiempo límite. Intenta reformular tu pregunta.")
+                        if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
+                            st.session_state.messages.pop()
                     else:
                         st.error(f"Error interno: {e}")

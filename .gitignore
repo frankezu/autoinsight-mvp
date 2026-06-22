@@ -21,3 +21,6 @@ Thumbs.db
 
 # Documentation
 pauta.md
+
+# Streamlit secrets
+.streamlit/secrets.toml
